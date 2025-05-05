@@ -9,7 +9,12 @@
 		"check": "biome check .",
 		"check:fix": "biome check --write .",
 		"preview": "vite preview",
-		"test": "vitest"
+		"test": "vitest",
+		"docker:build": "docker build -t vite-app .",
+		"docker:up": "docker run -p 5173:5173 --name vite-container vite-app",
+		"docker:stop": "docker stop vite-container",
+		"docker:start": "docker start vite-container",
+		"docker:rm": "docker rm vite-container"
 	},
 	"dependencies": {
 		"react": "^19.0.0",
