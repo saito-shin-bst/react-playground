@@ -19,7 +19,7 @@ jobs:
       - name: Run Biome Lint
         run: npm run check
       - name: Run Biome Formatter (dry-run)
-        run: npx biome format . --write=false
+        run: npx biome format .
 
   tsc:
     runs-on: ubuntu-latest
