@@ -13,11 +13,26 @@ jobs:
       models: read
     runs-on: ubuntu-latest
     steps:
+      - name: Set up GitHub CLI
+        uses: cli/cli-action@v2
+
+      - name: Get recent conversation history
+        id: history
+        run: |
+          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+            --paginate | jq -r 'sort_by(.created_at) | .[-5:] | map("[" + .user.login + "](" + .created_at + ")\n" + .body) | join("\n---\n")' > comments.txt
+
       - name: Ask AI
         id: ai
         uses: actions/ai-inference@v1
         with:
-          prompt: "${{ github.event.comment.body }}"
+          prompt: |
+            以下はこのIssueの直近の会話履歴です。流れを踏まえて、@ai宛の最新コメントに返答してください。
+
+            --- 会話履歴 ---
+            ${{ steps.history.outputs.comments }}
+            --- 最新コメント ---
+            ${{ github.event.comment.body }}
 
       - name: Post AI Response
         uses: peter-evans/create-or-update-comment@v4
