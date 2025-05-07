@@ -50,16 +50,17 @@ jobs:
       - name: Parse AI Output
         id: parse
         run: |
-          TITLE=$(echo "${{ steps.ai.outputs.response }}" | grep '^タイトル:' | sed 's/タイトル: //')
-          BODY=$(echo "${{ steps.ai.outputs.response }}" | grep '^本文:' | sed 's/本文: //')
-          IMPLEMENTATION=$(echo "${{ steps.ai.outputs.response }}" | grep '^実装内容:' | sed 's/実装内容: //')
-          echo "title=$TITLE" >> $GITHUB_OUTPUT
-          echo -e "body=$BODY\n\n## 実装内容\n$IMPLEMENTATION" >> $GITHUB_OUTPUT
+          echo "${{ steps.ai.outputs.response }}" > ai_output.txt
+          TITLE=$(grep '^タイトル:' ai_output.txt | sed 's/タイトル: //')
+          BODY=$(awk '/^本文:/,/^実装内容:/' ai_output.txt | sed '1d;$d')
+          IMPLEMENTATION=$(awk '/^実装内容:/,/$/' ai_output.txt | sed '1d')
+          echo "$BODY\n\n## 実装内容\n$IMPLEMENTATION" > pr_body.txt
+          echo "$TITLE" > pr_title.txt
 
       - name: Update PR Title & Body (gh cli)
         run: |
           gh pr edit ${{ github.event.pull_request.number }} \
-            --title "${{ steps.parse.outputs.title }}" \
-            --body "${{ steps.parse.outputs.body }}"
+            --title "$(cat pr_title.txt)" \
+            --body "$(cat pr_body.txt)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
