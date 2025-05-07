@@ -51,3 +51,11 @@ npm run docker:stop   # コンテナの停止
 npm run docker:start  # 停止したコンテナの再起動
 npm run docker:rm     # コンテナの削除
 ```
+
+## 📝 Node.jsバージョン指定のメモ
+
+- `package.json` の `"engines": { "node": "23.x" }` は「Node.js 23系（例: 23.0.0, 23.11.0 など）ならOK」という意味です。
+- GitHub Actions では `node-version-file: package.json` を使っているため、CIでも自動的に23系の最新安定版がインストールされます。
+- ローカル開発では、23系以外のNode.jsを使っていると警告が出ます（強制エラーにはなりません）。
+- VoltaやHeroku、Netlifyなど一部のサービスはこの指定を自動で参照してNode.jsのバージョンを決定します。
+- バージョンアップ時は `package.json` のこの値を変更するだけで、ローカルもCIも一括でバージョンを揃えられます。

@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  biome-lint-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-node-deps
+      - name: Run Biome Lint & Format Check
+        run: npm run check
+
+  tsc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js and Install Dependencies
+        uses: ./.github/actions/setup-node-deps
+      - name: TypeScript type check
+        run: npx tsc --noEmit
