@@ -6,7 +6,7 @@ on:
 
 jobs:
   ai-reply:
-    if: contains(github.event.comment.body, 'ai-by-shinshi')
+    if: contains(github.event.comment.body, '@ai')
     permissions:
       contents: read
       issues: write
@@ -40,4 +40,4 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             🤖 **AIの回答:**
-            ${{ steps.ai.outputs.response }} 
+            ${{ steps.ai.outputs.response }}
