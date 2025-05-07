@@ -1,0 +1,28 @@
+name: AI Q&A Bot
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  ai-reply:
+    if: contains(github.event.comment.body, '@ai')
+    permissions:
+      contents: read
+      issues: write
+      models: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask AI
+        id: ai
+        uses: actions/ai-inference@v1
+        with:
+          prompt: "${{ github.event.comment.body }}"
+
+      - name: Post AI Response
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            🤖 **AIの回答:**
+            ${{ steps.ai.outputs.response }} 
