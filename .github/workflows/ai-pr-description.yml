@@ -1,0 +1,61 @@
+name: AI PR Title & Description Generator
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  generate-pr-title-description:
+    permissions:
+      contents: read
+      pull-requests: write
+      models: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get PR Diff
+        id: diff
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git diff origin/${{ github.event.pull_request.base.ref }}...HEAD > pr.diff
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          cat pr.diff >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate PR Title & Description
+        id: ai
+        uses: actions/ai-inference@v1
+        with:
+          prompt: |
+            以下はPull Requestの差分です。この内容から、わかりやすい日本語のPRタイトル・説明文・実装内容要約をそれぞれ生成してください。
+            - タイトル: PRの要点を一言で
+            - 本文: 何を・なぜ・どのように変更したかを簡潔に
+            - 実装内容: コードの主な変更点や追加・修正内容を箇条書きで
+
+            出力フォーマットは
+            ---
+            タイトル: <タイトル>
+            本文: <説明文>
+            実装内容: <実装内容>
+            ---
+            でお願いします。
+
+            差分:
+            ${{ steps.diff.outputs.diff }}
+
+      - name: Parse AI Output
+        id: parse
+        run: |
+          TITLE=$(echo "${{ steps.ai.outputs.response }}" | grep '^タイトル:' | sed 's/タイトル: //')
+          BODY=$(echo "${{ steps.ai.outputs.response }}" | grep '^本文:' | sed 's/本文: //')
+          IMPLEMENTATION=$(echo "${{ steps.ai.outputs.response }}" | grep '^実装内容:' | sed 's/実装内容: //')
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo -e "body=$BODY\n\n## 実装内容\n$IMPLEMENTATION" >> $GITHUB_OUTPUT
+
+      - name: Update PR Title & Body
+        uses: peter-evans/create-or-update-pull-request@v5
+        with:
+          title: "${{ steps.parse.outputs.title }}"
+          body: "${{ steps.parse.outputs.body }}" 
