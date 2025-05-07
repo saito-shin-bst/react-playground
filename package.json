@@ -6,8 +6,8 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
-		"check": "biome check .",
-		"check:fix": "biome check --write .",
+		"check": "biome check src/",
+		"check:fix": "biome check --write src/",
 		"preview": "vite preview",
 		"test": "vitest",
 		"docker:build": "docker build -t vite-app .",
