@@ -50,11 +50,8 @@ jobs:
       - name: Parse AI Output
         id: parse
         run: |
-          echo "${{ steps.ai.outputs.response }}" > ai_output.txt
-          TITLE=$(grep '^タイトル:' ai_output.txt | sed 's/タイトル: //')
-          BODY=$(awk '/^本文:/,/^実装内容:/' ai_output.txt | sed '1d;$d')
-          IMPLEMENTATION=$(awk '/^実装内容:/,/$/' ai_output.txt | sed '1d')
-          echo "$BODY\n\n## 実装内容\n$IMPLEMENTATION" > pr_body.txt
+          echo "${{ steps.ai.outputs.response }}" > pr_body.txt
+          TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/タイトル: //')
           echo "$TITLE" > pr_title.txt
 
       - name: Update PR Title & Body (gh cli)
