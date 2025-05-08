@@ -13,14 +13,21 @@ jobs:
       models: read
     runs-on: ubuntu-latest
     steps:
-      - name: Set up GitHub CLI
-        uses: cli/setup-gh@v1
-
-      - name: Get recent conversation history
+      - name: Get conversation history
         id: history
-        run: |
-          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
-            --paginate | jq -r 'sort_by(.created_at) | .[-5:] | map("[" + .user.login + "](" + .created_at + ")\n" + .body) | join("\n---\n")' > comments.txt
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            // 最新5件のコメントを取得
+            const recentComments = comments.data.slice(-5).map(comment => 
+              `[${comment.user.login}](${comment.created_at})\n${comment.body}`
+            ).join('\n---\n');
+            return recentComments;
 
       - name: Ask AI
         id: ai
@@ -30,7 +37,7 @@ jobs:
             以下はこのIssueの直近の会話履歴です。流れを踏まえて、@ai宛の最新コメントに返答してください。
 
             --- 会話履歴 ---
-            ${{ steps.history.outputs.comments }}
+            ${{ steps.history.outputs.result }}
             --- 最新コメント ---
             ${{ github.event.comment.body }}
 
