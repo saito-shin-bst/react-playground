@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up GitHub CLI
-        uses: cli/cli-action@v2
+        uses: actions/gh-cli@v2
 
       - name: Get recent conversation history
         id: history
