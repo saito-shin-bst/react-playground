@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Package manager lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store
+
+# Version manager files
+.tool-versions
+.node-version
+.nvmrc
+
 # Editor directories and files
 .idea
 .DS_Store
