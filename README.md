@@ -1,7 +1,6 @@
 # shinshi-vite-playground
 
-新規メンバーのオンボーディング用のプレイグラウンドプロジェクトです。
-React + TypeScript + Viteの基本的な開発フローを学ぶことができます。
+React + TypeScript + Vite
 
 ## 🎯 このプロジェクトでできること
 
@@ -21,7 +20,7 @@ React + TypeScript + Viteの基本的な開発フローを学ぶことができ�
 - パッケージマネージャー: pnpm
 - 依存関係: package.jsonを確認してください
 
-## 🎬 はじめかた
+## 🎬 オンボーディング
 
 ### 1. Node.jsのインストール
 - [Node.js公式サイト](https://nodejs.org/)から最新版をインストールしてください
