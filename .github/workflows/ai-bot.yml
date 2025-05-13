@@ -3,16 +3,22 @@ name: AI Q&A Bot
 on:
   issue_comment:
     types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_target:
+    types: [review_requested]
 
 # リポジトリレベルの権限設定を追加
 permissions:
   contents: read
   issues: write
   pull-requests: write
+  checks: write
+  statuses: write
 
 jobs:
   ai-reply:
-    if: contains(github.event.comment.body, 'ai')
+    if: contains(github.event.comment.body, 'ai') || contains(github.event.review.body, 'ai')
     runs-on: ubuntu-latest
     steps:
       - name: Get conversation history
@@ -21,11 +27,25 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
+            let comments;
+            const isPR = !!context.payload.pull_request;
+            
+            if (isPR) {
+              // PRの場合
+              comments = await github.rest.pulls.listReviewComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+              });
+            } else {
+              // Issueの場合
+              comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+            }
+            
             // 最新5件のコメントを取得
             const recentComments = comments.data.slice(-5).map(comment => 
               `[${comment.user.login}](${comment.created_at})\n${comment.body}`
@@ -37,18 +57,18 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            以下はこのIssueの直近の会話履歴です。流れを踏まえて、@ai宛の最新コメントに返答してください。
+            以下はこの${{ github.event.pull_request && 'Pull Request' || 'Issue' }}の直近の会話履歴です。流れを踏まえて、@ai宛の最新コメントに返答してください。
 
             --- 会話履歴 ---
             ${{ steps.history.outputs.result }}
             --- 最新コメント ---
-            ${{ github.event.comment.body }}
+            ${{ github.event.comment.body || github.event.review.body }}
 
-      - name: Post AI Response
+      - name: Post AI Responses
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}s
+          issue-number: ${{ github.event.pull_request && github.event.pull_request.number || github.event.issue.number }}
           body: |
             🤖 **AIの回答:**
             ${{ steps.ai.outputs.response }}
