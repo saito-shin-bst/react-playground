@@ -6,7 +6,7 @@ on:
   pull_request_review_comment:
     types: [created]
   pull_request_target:
-    types: [review_requested]
+    types: [created, review_requested]
 
 # リポジトリレベルの権限設定を追加
 permissions:
@@ -20,6 +20,13 @@ jobs:
   ai-reply:
     if: contains(github.event.comment.body, 'ai') || contains(github.event.review.body, 'ai')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      checks: write
+      statuses: write
+      actions: write
     steps:
       - name: Get conversation history
         id: history
@@ -64,10 +71,10 @@ jobs:
             --- 最新コメント ---
             ${{ github.event.comment.body || github.event.review.body }}
 
-      - name: Post AI Responses
+      - name: Post AI Response
         uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}s
+          token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request && github.event.pull_request.number || github.event.issue.number }}
           body: |
             🤖 **AIの回答:**
