@@ -6,21 +6,21 @@ on:
   pull_request_review_comment:
     types: [created]
 
-# リポジトリレベルの権限設定を追加
-permissions:
-  contents: read
-  issues: write
-  pull-requests: write
-
 jobs:
   ai-reply:
     if: contains(github.event.comment.body, 'ai')
     runs-on: ubuntu-latest
+    # ジョブレベルで権限を設定
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
     steps:
       - name: Get conversation history
         id: history
         uses: actions/github-script@v7
         with:
+          # 明示的に権限を持つトークンを使用
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             let comments;
@@ -58,7 +58,10 @@ jobs:
       - name: Post AI Response
         uses: peter-evans/create-or-update-comment@v4
         with:
+          # 明示的に権限を持つトークンを使用
           token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          comment-id: ${{ github.event.comment.id }}
           issue-number: ${{ github.event.issue.number }}
           body: |
             🤖 **AIの回答:**
