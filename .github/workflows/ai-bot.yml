@@ -4,13 +4,15 @@ on:
   issue_comment:
     types: [created]
 
+# リポジトリレベルの権限設定を追加
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   ai-reply:
     if: contains(github.event.comment.body, 'ai')
-    permissions:
-      contents: read
-      issues: write
-      models: read
     runs-on: ubuntu-latest
     steps:
       - name: Get conversation history
