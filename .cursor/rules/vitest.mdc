@@ -1,0 +1,63 @@
+---
+description: 
+globs: .test.ts,.test.tsx
+alwaysApply: false
+---
+# Vitestテストガイドライン
+
+## 基本原則
+- テストは明確で理解しやすく
+- 各テストは独立して実行可能
+- カバレッジ80%以上を目標
+- フラッキーテストは即座に修正
+
+## ファイル構成
+- テストファイル: `*.test.ts` または `*.test.tsx`
+- テストファイルは対象と同じディレクトリに配置
+- ユーティリティは `__tests__/utils`
+- モックは `__mocks__` に配置
+
+## テスト記述
+```typescript
+import { describe, it, expect } from 'vitest'
+
+describe('関数Componentや関数、変数', () => {
+  describe('機能や状態', () => {
+    it('期待される動作を説明する', () => {
+    // Arrange（準備）
+    // Act（実行）
+    // Assert（検証）
+    });
+  })
+});
+```
+
+## モックとユーティリティ
+- vi.mock()を使用して外部依存をモック化
+- vi.spyOn()でメソッドの呼び出しを監視
+- 共通処理はヘルパー関数化
+
+## 特殊なケース
+```typescript
+// 非同期テスト
+it('非同期処理のテスト', async () => {
+  await expect(asyncFunction()).resolves.toBe(expected)
+})
+
+// スナップショット
+it('スナップショットテスト', () => {
+  expect(component).toMatchSnapshot()
+})
+
+// タイマー
+vi.useFakeTimers()
+it('タイマーのテスト', () => {
+  vi.advanceTimersByTime(1000)
+})
+```
+
+## CI/CD
+- PRごとにテスト実行
+- テスト失敗時はマージブロック
+- 実行時間を監視
+- watch modeでの開発を推奨
