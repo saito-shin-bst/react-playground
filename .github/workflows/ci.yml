@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-node-deps
       - name: Run Biome Lint & Format Check
-        run: npm run check
+        run: pnpm run check
 
   tsc:
     runs-on: ubuntu-latest
@@ -27,4 +27,4 @@ jobs:
       - name: Setup Node.js and Install Dependencies
         uses: ./.github/actions/setup-node-deps
       - name: TypeScript type check
-        run: npx tsc --noEmit
+        run: pnpm tsc --noEmit
