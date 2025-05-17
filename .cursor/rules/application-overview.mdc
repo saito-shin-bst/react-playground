@@ -1,0 +1,8 @@
+---
+description: Refer to it when you are asked or confirmed about the application overview or service domain, or when you are assigned an out-of-the-box task and do not know the details of the implementation.
+globs: 
+alwaysApply: false
+---
+# Application Overview: Today's Code Quest
+
+アプリケーションの概要の詳細については docs/overview.md をご参照ください。
