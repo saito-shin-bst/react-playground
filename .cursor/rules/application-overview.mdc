@@ -1,7 +1,7 @@
 ---
-description: Refer to it when you are asked or confirmed about the application overview or service domain, or when you are assigned an out-of-the-box task and do not know the details of the implementation.
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Application Overview: Today's Code Quest
 
