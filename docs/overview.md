@@ -195,8 +195,7 @@ type Quest = {
 ## 4. 技術スタック
 - フロントエンド: React + TypeScript
 - UIフレームワーク: shadcn/ui + Tailwind CSS
-- 状態管理: jotai
-- アニメーション: Framer Motion
+- グローバル状態管理: Context + useReducer + カスタムフック
 
 ## 5. 今後の展開
 - レッスンコンテンツの充実化

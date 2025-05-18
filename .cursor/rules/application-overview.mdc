@@ -3,6 +3,15 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Application Overview: Today's Code Quest
+# Application Overview: OmoiCode: Code Quest
 
-アプリケーションの概要の詳細については docs/overview.md をご参照ください。
+## アプリケーション概要
+OmoiCode: Code Questは、エンジニアの効率的な知識習得と実践的なスキル向上を支援するアプリケーションです。
+
+## 詳細ドキュメント
+アプリケーションの詳細については、以下のドキュメントをご参照ください：
+- アプリケーション概要: `docs/overview.md`
+
+必要に応じて、以下のドキュメントもご参照ください：
+- 画面設計: `docs/screen-design.md`
+- 機能設計: `docs/feature-design.md`
