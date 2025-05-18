@@ -24,3 +24,4 @@ dist-ssr
 
 # Cursor memories
 .cursor/memories/memory.md
+*storybook.log

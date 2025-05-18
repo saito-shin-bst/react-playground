@@ -1,46 +1,60 @@
 {
-	"name": "shinshi-vite-playground",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc -b && vite build",
-		"check": "biome check src/",
-		"check:fix": "biome check --write src/",
-		"preview": "vite preview",
-		"test": "vitest",
-		"docker:build": "docker build -t vite-app .",
-		"docker:up": "docker run -p 5173:5173 --name vite-container vite-app",
-		"docker:stop": "docker stop vite-container",
-		"docker:start": "docker start vite-container",
-		"docker:rm": "docker rm vite-container"
-	},
-	"dependencies": {
-		"@radix-ui/react-slot": "^1.2.2",
-		"@tailwindcss/vite": "^4.1.7",
-		"class-variance-authority": "^0.7.1",
-		"clsx": "^2.1.1",
-		"lucide-react": "^0.511.0",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"tailwind-merge": "^3.3.0",
-		"tailwindcss": "^4.1.7"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@types/node": "^22.15.18",
-		"@types/react": "^19.0.10",
-		"@types/react-dom": "^19.0.4",
-		"@vitejs/plugin-react": "^4.3.4",
-		"tw-animate-css": "^1.3.0",
-		"typescript": "~5.7.2",
-		"vite": "^6.3.1",
-		"vitest": "^3.1.2"
-	},
-	"engines": {
-		"node": "20.19.0",
-		"pnpm": "9.15.9"
-	},
-	"_note_node_version": "'engines.node'はNode.js 23系（例: 23.0.0, 23.11.0 など）を推奨。CIや一部サービスもこの値を参照します。バージョンアップ時はここを変更するだけでOKです。"
+  "name": "shinshi-vite-playground",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "check": "biome check src/",
+    "check:fix": "biome check --write src/",
+    "preview": "vite preview",
+    "test": "vitest",
+    "docker:build": "docker build -t vite-app .",
+    "docker:up": "docker run -p 5173:5173 --name vite-container vite-app",
+    "docker:stop": "docker stop vite-container",
+    "docker:start": "docker start vite-container",
+    "docker:rm": "docker rm vite-container",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.13",
+    "@radix-ui/react-dropdown-menu": "^2.1.14",
+    "@radix-ui/react-separator": "^1.1.6",
+    "@radix-ui/react-slot": "^1.2.2",
+    "@radix-ui/react-tooltip": "^1.2.6",
+    "@tailwindcss/vite": "^4.1.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.511.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.1.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-onboarding": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@storybook/test": "^8.6.14",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "storybook": "^8.6.14",
+    "tw-animate-css": "^1.3.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.3.1",
+    "vitest": "^3.1.2"
+  },
+  "engines": {
+    "node": "20.19.0",
+    "pnpm": "9.15.9"
+  },
+  "_note_node_version": "'engines.node'はNode.js 23系（例: 23.0.0, 23.11.0 など）を推奨。CIや一部サービスもこの値を参照します。バージョンアップ時はここを変更するだけでOKです。"
 }
