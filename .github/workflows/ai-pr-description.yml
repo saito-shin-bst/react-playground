@@ -65,14 +65,14 @@ jobs:
 
       - name: Update PR Title & Description
         run: |
-          echo "${{ steps.ai.outputs.response }}" > pr_body.txt
+          echo '${{ steps.ai.outputs.response }}' > pr_body.txt
           if [ "${{ github.event.action }}" = "opened" ]; then
             # PR作成時はタイトルも更新
-            TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/タイトル: //')
-            BODY=$(sed '1,/^実装内容/d' pr_body.txt)
+            TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/^タイトル: *//')
+            BODY=$(sed '1,/^実装内容$/d' pr_body.txt)
             gh pr edit ${{ github.event.pull_request.number }} \
-              --title "$TITLE" \
-              --body "$BODY"
+              --title "${TITLE}" \
+              --body "${BODY}"
           else
             # push時は本文のみ更新
             gh pr edit ${{ github.event.pull_request.number }} \
