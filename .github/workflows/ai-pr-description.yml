@@ -43,21 +43,23 @@ jobs:
         with:
           prompt: |
             以下はPull Requestの差分です。この内容から、以下の形式でPRのタイトルと説明文を生成してください。
+            必ず日本語で出力してください。
 
             【制約事項】
-            - タイトル: "${{ steps.prefix.outputs.prefix }}: " で始まる一行の文章
+            - タイトル: "${{ steps.prefix.outputs.prefix }}: " で始まる一行の日本語の文章
             - 本文: 「実装内容」という見出しの下に、変更内容を箇条書きで記載
             - 各箇条書きの項目は "${{ steps.prefix.outputs.prefix }}: " で始める
             - 説明は簡潔に
+            - すべての説明は日本語で記述する
 
             【出力フォーマット】
             ---
-            タイトル: ${{ steps.prefix.outputs.prefix }}: <タイトルの残りの部分>
+            タイトル: ${{ steps.prefix.outputs.prefix }}: <日本語でのタイトル>
             本文:
             実装内容
 
-            - ${{ steps.prefix.outputs.prefix }}: <変更内容1>
-            - ${{ steps.prefix.outputs.prefix }}: <変更内容2（必要な場合は追加していく）>
+            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容1>
+            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容2（必要な場合は追加していく）>
             ---
 
             差分:
