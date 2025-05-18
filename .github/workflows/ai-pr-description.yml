@@ -2,10 +2,10 @@ name: AI PR Title & Description Generator
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
-  generate-pr-title-description:
+  generate-pr-description:
     permissions:
       contents: read
       pull-requests: write
@@ -16,6 +16,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Extract branch prefix
+        id: prefix
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ $BRANCH_NAME =~ ^(feat|fix|chore|docs|style|refactor|perf|test|remove)/ ]]; then
+            PREFIX="${BASH_REMATCH[1]}"
+          else
+            PREFIX="chore"
+          fi
+          echo "prefix=$PREFIX" >> $GITHUB_OUTPUT
 
       - name: Get PR Diff
         id: diff
@@ -31,30 +42,41 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            以下はPull Requestの差分です。この内容から、わかりやすい日本語のPRタイトル・説明文をそれぞれ生成してください。
-            - タイトル: PRの要点を一言で書いてください
-            - 本文: 何を・なぜ・どのように変更したかを簡潔に書いてください
-            出力フォーマットは
-            ---
-            タイトル: <タイトル> 
-            本文: <説明文>
-            ---
-            でお願いします。
+            以下はPull Requestの差分です。この内容から、${{ github.event.action == 'opened' && 'タイトルと' || '' }}説明文を生成してください。
+            必ず日本語で出力してください。
+
+            【制約事項】
+            ${{ github.event.action == 'opened' && '- タイトル: "${{ steps.prefix.outputs.prefix }}: " で始まる一行の日本語の文章' || '' }}
+            - 「実装内容」という見出しの下に、変更内容を箇条書きで記載
+            - 各箇条書きの項目は "${{ steps.prefix.outputs.prefix }}: " で始める
+            - 説明は簡潔に
+            - すべての説明は日本語で記述する
+
+            【出力フォーマット】
+            ${{ github.event.action == 'opened' && 'タイトル: ${{ steps.prefix.outputs.prefix }}: <日本語でのタイトル>' || '' }}
+            ${{ github.event.action == 'opened' && '本文:' || '' }}
+            実装内容
+
+            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容1>
+            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容2（必要な場合は追加していく）>
 
             差分:
             ${{ steps.diff.outputs.diff }}
 
-      - name: Parse AI Output
-        id: parse
+      - name: Update PR Title & Description
         run: |
           echo "${{ steps.ai.outputs.response }}" > pr_body.txt
-          TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/タイトル: //')
-          echo "$TITLE" > pr_title.txt
-
-      - name: Update PR Title & Body (gh cli)
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} \
-            --title "$(cat pr_title.txt)" \
-            --body "$(cat pr_body.txt)"
+          if [ "${{ github.event.action }}" = "opened" ]; then
+            # PR作成時はタイトルも更新
+            TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/タイトル: //')
+            BODY=$(sed '1,/^実装内容/d' pr_body.txt)
+            gh pr edit ${{ github.event.pull_request.number }} \
+              --title "$TITLE" \
+              --body "$BODY"
+          else
+            # push時は本文のみ更新
+            gh pr edit ${{ github.event.pull_request.number }} \
+              --body "$(cat pr_body.txt)"
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
