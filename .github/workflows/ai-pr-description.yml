@@ -39,6 +39,8 @@ jobs:
 
       - name: Generate PR Title & Description
         id: ai
+        env:
+          PREFIX: ${{ steps.prefix.outputs.prefix }}
         uses: actions/ai-inference@v1
         with:
           prompt: |
@@ -46,19 +48,19 @@ jobs:
             必ず日本語で出力してください。
 
             【制約事項】
-            ${{ github.event.action == 'opened' && '- タイトル: "${{ steps.prefix.outputs.prefix }}: " で始まる一行の日本語の文章' || '' }}
+            ${{ github.event.action == 'opened' && format('- タイトル: "{0}: " で始まる一行の日本語の文章', env.PREFIX) || '' }}
             - 「実装内容」という見出しの下に、変更内容を箇条書きで記載
-            - 各箇条書きの項目は "${{ steps.prefix.outputs.prefix }}: " で始める
+            - 各箇条書きの項目は "${PREFIX}: " で始める
             - 説明は簡潔に
             - すべての説明は日本語で記述する
 
             【出力フォーマット】
-            ${{ github.event.action == 'opened' && 'タイトル: ${{ steps.prefix.outputs.prefix }}: <日本語でのタイトル>' || '' }}
+            ${{ github.event.action == 'opened' && format('タイトル: {0}: <日本語でのタイトル>', env.PREFIX) || '' }}
             ${{ github.event.action == 'opened' && '本文:' || '' }}
             実装内容
 
-            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容1>
-            - ${{ steps.prefix.outputs.prefix }}: <日本語での変更内容2（必要な場合は追加していく）>
+            - ${PREFIX}: <日本語での変更内容1>
+            - ${PREFIX}: <日本語での変更内容2（必要な場合は追加していく）>
 
             差分:
             ${{ steps.diff.outputs.diff }}
