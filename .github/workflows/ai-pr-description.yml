@@ -17,6 +17,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Extract branch prefix
+        id: prefix
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ $BRANCH_NAME =~ ^(feat|fix|chore|docs|style|refactor|perf|test|remove)/ ]]; then
+            PREFIX="${BASH_REMATCH[1]}"
+          else
+            PREFIX="chore"
+          fi
+          echo "prefix=$PREFIX" >> $GITHUB_OUTPUT
+
       - name: Get PR Diff
         id: diff
         run: |
@@ -31,15 +42,23 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            以下はPull Requestの差分です。この内容から、わかりやすい日本語のPRタイトル・説明文をそれぞれ生成してください。
-            - タイトル: PRの要点を一言で書いてください
-            - 本文: 何を・なぜ・どのように変更したかを簡潔に書いてください
-            出力フォーマットは
+            以下はPull Requestの差分です。この内容から、以下の形式でPRのタイトルと説明文を生成してください。
+
+            【制約事項】
+            - タイトル: "${{ steps.prefix.outputs.prefix }}: " で始まる一行の文章
+            - 本文: 「実装内容」という見出しの下に、変更内容を箇条書きで記載
+            - 各箇条書きの項目は "${{ steps.prefix.outputs.prefix }}: " で始める
+            - 説明は簡潔に
+
+            【出力フォーマット】
             ---
-            タイトル: <タイトル> 
-            本文: <説明文>
+            タイトル: ${{ steps.prefix.outputs.prefix }}: <タイトルの残りの部分>
+            本文:
+            実装内容
+
+            - ${{ steps.prefix.outputs.prefix }}: <変更内容1>
+            - ${{ steps.prefix.outputs.prefix }}: <変更内容2（必要な場合は追加していく）>
             ---
-            でお願いします。
 
             差分:
             ${{ steps.diff.outputs.diff }}
@@ -49,7 +68,9 @@ jobs:
         run: |
           echo "${{ steps.ai.outputs.response }}" > pr_body.txt
           TITLE=$(grep '^タイトル:' pr_body.txt | sed 's/タイトル: //')
+          BODY=$(sed '1,/^本文:/d' pr_body.txt)
           echo "$TITLE" > pr_title.txt
+          echo "$BODY" > pr_body.txt
 
       - name: Update PR Title & Body (gh cli)
         run: |
