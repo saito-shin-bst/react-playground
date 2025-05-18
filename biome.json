@@ -21,7 +21,7 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"useImportType": "off"
+				"useImportType": "error"
 			}
 		}
 	},
@@ -36,7 +36,7 @@
 			"linter": {
 				"rules": {
 					"nursery": {
-						"useSortedClasses": "off"
+						"useSortedClasses": "error"
 					}
 				}
 			}
