@@ -1,7 +1,7 @@
 ---
-description: When conversations with users necessitate package implementation
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 ## パッケージ導入ルール
 
