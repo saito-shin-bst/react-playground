@@ -123,8 +123,7 @@ export const AppSidebar = () => {
 													<SidebarMenuSubButton
 														asChild
 														className={`${
-															pathname.pathname ===
-															"/basic-philosophy/state"
+															pathname.pathname === "/basic-philosophy/state"
 																? "bg-gray-200 text-gray-800"
 																: ""
 														}`}
@@ -141,8 +140,7 @@ export const AppSidebar = () => {
 													<SidebarMenuSubButton
 														asChild
 														className={`${
-															pathname.pathname ===
-															"/basic-philosophy/events"
+															pathname.pathname === "/basic-philosophy/events"
 																? "bg-gray-200 text-gray-800"
 																: ""
 														}`}
