@@ -1,0 +1,1 @@
+export { VirtualDomComponent } from "./VirtualDomComponent";
